@@ -31,4 +31,9 @@ class NewsFeedVO {
       _$NewsFeedVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$NewsFeedVOToJson(this);
+
+  @override
+  String toString() {
+    return 'NewsFeedVO{id: $id, description: $description, profilePicture: $profilePicture, userName: $userName, postImage: $postImage}';
+  }
 }

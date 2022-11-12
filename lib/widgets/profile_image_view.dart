@@ -13,7 +13,7 @@ class ProfileImageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       backgroundImage: NetworkImage(
-        profileImage,
+        (profileImage != "") ? profileImage : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png",
       ),
       radius: MARGIN_LARGE,
     );

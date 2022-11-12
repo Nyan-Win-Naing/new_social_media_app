@@ -55,6 +55,7 @@ class AddNewPostBloc extends ChangeNotifier {
 
   void _prepopulateDataForEditMode(int newsFeedId) {
     _model.getNewsFeedById(newsFeedId).listen((newsFeed) {
+      // print("News Feed Object is $newsFeed");
       userName = newsFeed.userName ?? "";
       profilePicture = newsFeed.profilePicture ?? "";
       newPostDescription = newsFeed.description ?? "";

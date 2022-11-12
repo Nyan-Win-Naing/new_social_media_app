@@ -149,7 +149,7 @@ class ProfileImageAndNameView extends StatelessWidget {
       builder: (context, bloc, child) => Row(
         children: [
           ProfileImageView(
-            profileImage: bloc.profilePicture ?? "",
+            profileImage: bloc.profilePicture,
           ),
           const SizedBox(
             width: MARGIN_MEDIUM_2,
