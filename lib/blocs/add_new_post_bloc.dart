@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:my_social_media_app/data/models/social_model.dart';
 import 'package:my_social_media_app/data/models/social_model_impl.dart';
@@ -9,10 +11,15 @@ class AddNewPostBloc extends ChangeNotifier {
   bool isAddNewPostError = false;
   bool isDisposed = false;
 
+  /// Image
+  File? chosenImageFile;
+  bool isLoading = false;
+
   /// For Edit Mode
   bool isInEditMode = false;
   String userName = "";
   String profilePicture = "";
+  String uploadedPostImageUrl = "";
   NewsFeedVO? mNewsFeed;
 
   /// Model
@@ -37,11 +44,19 @@ class AddNewPostBloc extends ChangeNotifier {
       _notifySafely();
       return Future.error("Error");
     } else {
+      isLoading = true;
+      _notifySafely();
       isAddNewPostError = false;
       if(isInEditMode) {
-        return _editNewsFeedPost();
+        return _editNewsFeedPost().then((value) {
+          isLoading = false;
+          _notifySafely();
+        });
       } else {
-        return _createNewNewsFeedPost();
+        return _createNewNewsFeedPost().then((value) {
+          isLoading = false;
+          _notifySafely();
+        });
       }
       // return _model.addNewPost(newPostDescription);
     }
@@ -58,6 +73,7 @@ class AddNewPostBloc extends ChangeNotifier {
       // print("News Feed Object is $newsFeed");
       userName = newsFeed.userName ?? "";
       profilePicture = newsFeed.profilePicture ?? "";
+      uploadedPostImageUrl = newsFeed.postImage ?? "";
       newPostDescription = newsFeed.description ?? "";
       mNewsFeed = newsFeed;
       _notifySafely();
@@ -79,15 +95,24 @@ class AddNewPostBloc extends ChangeNotifier {
   Future _editNewsFeedPost() {
     mNewsFeed?.description = newPostDescription;
     if(mNewsFeed != null) {
-      return _model.editPost(mNewsFeed!);
+      return _model.editPost(mNewsFeed!, chosenImageFile, uploadedPostImageUrl);
     } else {
       return Future.error("Error");
     }
   }
 
   Future<void> _createNewNewsFeedPost() {
-    return _model.addNewPost(newPostDescription);
+    return _model.addNewPost(newPostDescription, chosenImageFile);
   }
 
+  void onImageChosen(File imageFile) {
+    chosenImageFile = imageFile;
+    _notifySafely();
+  }
 
+  void onTapDeleteImage() {
+    chosenImageFile = null;
+    uploadedPostImageUrl = "";
+    _notifySafely();
+  }
 }
