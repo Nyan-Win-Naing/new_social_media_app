@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_social_media_app/blocs/news_feed_bloc.dart';
 import 'package:my_social_media_app/pages/add_new_post_page.dart';
+import 'package:my_social_media_app/pages/login_page.dart';
 import 'package:my_social_media_app/resources/dimens.dart';
+import 'package:my_social_media_app/utils/extensions.dart';
 import 'package:my_social_media_app/viewitems/news_feed_item_view.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +16,7 @@ class NewsFeedPage extends StatelessWidget {
       create: (context) => NewsFeedBloc(),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           centerTitle: false,
           elevation: 0.0,
           backgroundColor: Colors.white,
@@ -43,7 +46,25 @@ class NewsFeedPage extends StatelessWidget {
                   size: MARGIN_LARGE,
                 ),
               ),
-            )
+            ),
+            Consumer<NewsFeedBloc>(
+              builder: (context, bloc, child) => GestureDetector(
+                onTap: () {
+                  bloc.onTapLogout().then(
+                          (_) => navigateToScreen(context, const LoginPage()));
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    right: MARGIN_LARGE,
+                  ),
+                  child: const Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                    size: MARGIN_LARGE,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(

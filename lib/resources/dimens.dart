@@ -18,3 +18,4 @@ const TEXT_BIG = 32.0;
 
 /// App Specific
 const ADD_NEW_POST_TEXTFIELD_HEIGHT = 300.0;
+const LOGIN_SCREEN_TOP_PADDING = 88.0;

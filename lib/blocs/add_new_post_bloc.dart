@@ -1,15 +1,19 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:my_social_media_app/data/models/authentication_model.dart';
+import 'package:my_social_media_app/data/models/authentication_model_impl.dart';
 import 'package:my_social_media_app/data/models/social_model.dart';
 import 'package:my_social_media_app/data/models/social_model_impl.dart';
 import 'package:my_social_media_app/data/vos/news_feed_vo.dart';
+import 'package:my_social_media_app/data/vos/user_vo.dart';
 
 class AddNewPostBloc extends ChangeNotifier {
   /// State
   String newPostDescription = "";
   bool isAddNewPostError = false;
   bool isDisposed = false;
+  UserVO? _loggedInUser;
 
   /// Image
   File? chosenImageFile;
@@ -24,8 +28,10 @@ class AddNewPostBloc extends ChangeNotifier {
 
   /// Model
   final SocialModel _model = SocialModelImpl();
+  final AuthenticationModel _authenticationModel = AuthenticationModelImpl();
 
   AddNewPostBloc({int? newsFeedId}) {
+    _loggedInUser = _authenticationModel.getLoggedInUser();
     if(newsFeedId != null) {
       isInEditMode = true;
       _prepopulateDataForEditMode(newsFeedId);
@@ -81,7 +87,7 @@ class AddNewPostBloc extends ChangeNotifier {
   }
 
   void _prepopulateDataForAddNewPost() {
-    userName = "Nyan Win Naing";
+    userName = _loggedInUser?.userName ?? "";
     profilePicture = "http://1.bp.blogspot.com/-bWTWg8Liw08/T3a4-R6-f5I/AAAAAAAAApw/fqviR8pguug/w1200-h630-p-k-no-nu/Logo-Of-Tom-and-Jerry-Wallpaper.jpg";
     _notifySafely();
   }
