@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:my_social_media_app/analytics/firebase_analytics_tracker.dart';
 import 'package:my_social_media_app/data/models/authentication_model.dart';
 import 'package:my_social_media_app/data/models/authentication_model_impl.dart';
 import 'package:my_social_media_app/data/models/social_model.dart';
@@ -32,12 +34,15 @@ class AddNewPostBloc extends ChangeNotifier {
 
   AddNewPostBloc({int? newsFeedId}) {
     _loggedInUser = _authenticationModel.getLoggedInUser();
-    if(newsFeedId != null) {
+    if (newsFeedId != null) {
       isInEditMode = true;
       _prepopulateDataForEditMode(newsFeedId);
     } else {
       _prepopulateDataForAddNewPost();
     }
+
+    /// Firebase
+    _sendAnalyticsData(addNewPostScreenReached, null);
   }
 
   void onNewPostTextChanged(String newPostDescription) {
@@ -45,7 +50,7 @@ class AddNewPostBloc extends ChangeNotifier {
   }
 
   Future onTapAddNewPost() {
-    if(newPostDescription.isEmpty) {
+    if (newPostDescription.isEmpty) {
       isAddNewPostError = true;
       _notifySafely();
       return Future.error("Error");
@@ -53,15 +58,18 @@ class AddNewPostBloc extends ChangeNotifier {
       isLoading = true;
       _notifySafely();
       isAddNewPostError = false;
-      if(isInEditMode) {
+      if (isInEditMode) {
         return _editNewsFeedPost().then((value) {
           isLoading = false;
           _notifySafely();
+          _sendAnalyticsData(
+              editPostAction, {postId : mNewsFeed?.id.toString() ?? ""});
         });
       } else {
         return _createNewNewsFeedPost().then((value) {
           isLoading = false;
           _notifySafely();
+          _sendAnalyticsData(addNewPostAction, null);
         });
       }
       // return _model.addNewPost(newPostDescription);
@@ -88,19 +96,20 @@ class AddNewPostBloc extends ChangeNotifier {
 
   void _prepopulateDataForAddNewPost() {
     userName = _loggedInUser?.userName ?? "";
-    profilePicture = "http://1.bp.blogspot.com/-bWTWg8Liw08/T3a4-R6-f5I/AAAAAAAAApw/fqviR8pguug/w1200-h630-p-k-no-nu/Logo-Of-Tom-and-Jerry-Wallpaper.jpg";
+    profilePicture =
+        "http://1.bp.blogspot.com/-bWTWg8Liw08/T3a4-R6-f5I/AAAAAAAAApw/fqviR8pguug/w1200-h630-p-k-no-nu/Logo-Of-Tom-and-Jerry-Wallpaper.jpg";
     _notifySafely();
   }
 
   void _notifySafely() {
-    if(!isDisposed) {
+    if (!isDisposed) {
       notifyListeners();
     }
   }
 
   Future _editNewsFeedPost() {
     mNewsFeed?.description = newPostDescription;
-    if(mNewsFeed != null) {
+    if (mNewsFeed != null) {
       return _model.editPost(mNewsFeed!, chosenImageFile, uploadedPostImageUrl);
     } else {
       return Future.error("Error");
@@ -120,5 +129,10 @@ class AddNewPostBloc extends ChangeNotifier {
     chosenImageFile = null;
     uploadedPostImageUrl = "";
     _notifySafely();
+  }
+
+  /// Analytics
+  void _sendAnalyticsData(String name, Map<String, String>? parameters) async {
+    await FirebaseAnalyticsTracker().logEvent(name, parameters);
   }
 }
