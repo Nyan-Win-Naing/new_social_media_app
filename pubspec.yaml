@@ -50,6 +50,11 @@ dependencies:
   flutter_local_notifications: ^12.0.3
   firebase_analytics: ^10.0.5
   firebase_crashlytics: ^3.0.5
+  firebase_performance: ^0.9.0+5
+  firebase_remote_config: ^3.0.5
+  firebase_in_app_messaging: ^0.7.0+5
+  firebase_installations: ^16.3.6
+  google_ml_kit: ^0.13.0
 
 dev_dependencies:
   flutter_test:

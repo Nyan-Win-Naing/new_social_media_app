@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_installations/firebase_installations.dart';
 import 'package:flutter/material.dart';
 import 'package:my_social_media_app/data/models/authentication_model_impl.dart';
 import 'package:my_social_media_app/fcm/fcm_service.dart';
@@ -9,6 +10,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FCMService().listenForMessages();
+
+  var firebaseInstallationId = await FirebaseInstallations.id ?? "Unknown installation id";
+  debugPrint("Firebase Installation id ===========> $firebaseInstallationId");
   runApp(MyApp());
 }
 

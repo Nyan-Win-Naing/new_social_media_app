@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:my_social_media_app/blocs/add_new_post_bloc.dart';
 import 'package:my_social_media_app/resources/dimens.dart';
+import 'package:my_social_media_app/resources/strings.dart';
+import 'package:my_social_media_app/widgets/loading_view.dart';
+import 'package:my_social_media_app/widgets/primary_button_view.dart';
 import 'package:my_social_media_app/widgets/profile_image_view.dart';
 import 'package:provider/provider.dart';
 
@@ -70,11 +72,11 @@ class AddNewPostPage extends StatelessWidget {
                       SizedBox(
                         height: MARGIN_MEDIUM_2,
                       ),
-                      PostImageView(),
+                      PostDescriptionErrorView(),
                       SizedBox(
                         height: MARGIN_MEDIUM_2,
                       ),
-                      PostDescriptionErrorView(),
+                      PostImageView(),
                       SizedBox(
                         height: MARGIN_LARGE,
                       ),
@@ -103,32 +105,6 @@ class AddNewPostPage extends StatelessWidget {
   }
 }
 
-class LoadingView extends StatelessWidget {
-  const LoadingView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black12,
-      child: const Center(
-        child: SizedBox(
-          width: MARGIN_XXLARGE,
-          height: MARGIN_XXLARGE,
-          child: LoadingIndicator(
-            indicatorType: Indicator.audioEqualizer,
-            colors: [Colors.white],
-            strokeWidth: 2,
-            backgroundColor: Colors.transparent,
-            pathBackgroundColor: Colors.black,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class PostImageView extends StatelessWidget {
   const PostImageView({Key? key}) : super(key: key);
 
@@ -143,45 +119,37 @@ class PostImageView extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            (bloc.uploadedPostImageUrl.isEmpty)
-                ? Container(
-                    child: (bloc.chosenImageFile == null)
-                        ? GestureDetector(
-                            child: SizedBox(
-                              height: 300,
-                              child: Image.network(
-                                "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640",
-                              ),
-                            ),
-                            onTap: () async {
-                              final ImagePicker _picker = ImagePicker();
-                              // Pick an image
-                              final XFile? image = await _picker.pickImage(
-                                  source: ImageSource.gallery);
-                              if (image != null) {
-                                bloc.onImageChosen(File(image.path));
-                              }
-                            },
-                          )
-                        : SizedBox(
-                            height: 300,
-                            child: Image.file(
-                              bloc.chosenImageFile ?? File(""),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                  )
-                : SizedBox(
-                      height: 300,
-                      child: Image.network(
-                        bloc.uploadedPostImageUrl,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+            Container(
+              child: (bloc.chosenImageFile == null)
+                  ? GestureDetector(
+                child: SizedBox(
+                  height: 300,
+                  child: Image.network(
+                    "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640",
+                  ),
+                ),
+                onTap: () async {
+                  final ImagePicker _picker = ImagePicker();
+                  // Pick an image
+                  final XFile? image = await _picker.pickImage(
+                      source: ImageSource.gallery);
+                  if (image != null) {
+                    bloc.onImageChosen(File(image.path));
+                  }
+                },
+              )
+                  : SizedBox(
+                height: 300,
+                child: Image.file(
+                  bloc.chosenImageFile ?? File(""),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
             Align(
               alignment: Alignment.topRight,
               child: Visibility(
-                visible: bloc.chosenImageFile != null || bloc.uploadedPostImageUrl.isNotEmpty,
+                visible: bloc.chosenImageFile != null,
                 child: GestureDetector(
                   onTap: () {
                     bloc.onTapDeleteImage();
@@ -237,25 +205,9 @@ class PostButtonView extends StatelessWidget {
             Navigator.pop(context);
           });
         },
-        child: Container(
-          width: double.infinity,
-          height: MARGIN_XXLARGE,
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(
-              MARGIN_LARGE,
-            ),
-          ),
-          child: const Center(
-            child: Text(
-              "POST",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: TEXT_REGULAR_2X,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+        child: PrimaryButtonView(
+          label: LBL_POST,
+          themeColor: bloc.themeColor,
         ),
       ),
     );

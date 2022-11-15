@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_social_media_app/blocs/news_feed_bloc.dart';
 import 'package:my_social_media_app/pages/add_new_post_page.dart';
 import 'package:my_social_media_app/pages/login_page.dart';
+import 'package:my_social_media_app/pages/text_detection_page.dart';
 import 'package:my_social_media_app/resources/dimens.dart';
 import 'package:my_social_media_app/utils/extensions.dart';
 import 'package:my_social_media_app/viewitems/news_feed_item_view.dart';
@@ -35,6 +36,21 @@ class NewsFeedPage extends StatelessWidget {
             ),
           ),
           actions: [
+            GestureDetector(
+              onTap: () {
+                navigateToScreen(context, TextDetectionPage());
+              },
+              child: Container(
+                margin: const EdgeInsets.only(
+                  right: MARGIN_LARGE,
+                ),
+                child: const Icon(
+                  Icons.text_fields_outlined,
+                  color: Colors.grey,
+                  size: MARGIN_LARGE,
+                ),
+              ),
+            ),
             GestureDetector(
               onTap: () {},
               child: Container(

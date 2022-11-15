@@ -3,10 +3,12 @@ import 'package:my_social_media_app/resources/dimens.dart';
 
 class PrimaryButtonView extends StatelessWidget {
   final String label;
+  final Color themeColor;
 
   const PrimaryButtonView({
     Key? key,
     required this.label,
+    this.themeColor = Colors.black,
   }) : super(key: key);
 
   @override
@@ -15,7 +17,7 @@ class PrimaryButtonView extends StatelessWidget {
       width: double.infinity,
       height: MARGIN_XXLARGE,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: themeColor,
         borderRadius: BorderRadius.circular(
           MARGIN_LARGE,
         ),

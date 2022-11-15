@@ -9,6 +9,7 @@ import 'package:my_social_media_app/data/models/social_model.dart';
 import 'package:my_social_media_app/data/models/social_model_impl.dart';
 import 'package:my_social_media_app/data/vos/news_feed_vo.dart';
 import 'package:my_social_media_app/data/vos/user_vo.dart';
+import 'package:my_social_media_app/remote_config/firebase_remote_configuration.dart';
 
 class AddNewPostBloc extends ChangeNotifier {
   /// State
@@ -16,6 +17,8 @@ class AddNewPostBloc extends ChangeNotifier {
   bool isAddNewPostError = false;
   bool isDisposed = false;
   UserVO? _loggedInUser;
+
+  Color themeColor = Colors.black;
 
   /// Image
   File? chosenImageFile;
@@ -32,6 +35,9 @@ class AddNewPostBloc extends ChangeNotifier {
   final SocialModel _model = SocialModelImpl();
   final AuthenticationModel _authenticationModel = AuthenticationModelImpl();
 
+  /// Remote Configs
+  final FirebaseRemoteConfiguration _firebaseRemoteConfiguration = FirebaseRemoteConfiguration();
+
   AddNewPostBloc({int? newsFeedId}) {
     _loggedInUser = _authenticationModel.getLoggedInUser();
     if (newsFeedId != null) {
@@ -43,6 +49,7 @@ class AddNewPostBloc extends ChangeNotifier {
 
     /// Firebase
     _sendAnalyticsData(addNewPostScreenReached, null);
+    _getRemoteConfigAndChangeTheme();
   }
 
   void onNewPostTextChanged(String newPostDescription) {
@@ -134,5 +141,10 @@ class AddNewPostBloc extends ChangeNotifier {
   /// Analytics
   void _sendAnalyticsData(String name, Map<String, String>? parameters) async {
     await FirebaseAnalyticsTracker().logEvent(name, parameters);
+  }
+
+  void _getRemoteConfigAndChangeTheme() {
+    themeColor = _firebaseRemoteConfiguration.getThemeColorFromRemoteConfig();
+    _notifySafely();
   }
 }
